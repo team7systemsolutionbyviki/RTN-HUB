@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | RTN LETZZ NATURE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <style>
+        .product-detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            margin-top: 40px;
+        }
+        .detail-image {
+            background: #f9f9f9;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .detail-image img {
+            max-height: 500px;
+            width: auto;
+            border-radius: 8px;
+        }
+        .detail-info h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .detail-brand {
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+        .detail-price {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .detail-desc {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+        .stock-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+        .in-stock { background: #e8f5e9; color: #2e7d32; }
+        .out-stock { background: #ffebee; color: #c62828; }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .quantity-selector input {
+            width: 60px;
+            height: 45px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        .action-buttons .btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .product-detail-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header (Same) -->
+    <header>
+        <div class="container header-inner">
+            <a href="index.html" class="logo"><img src="images/logo.jpg" alt="Logo"></a>
+            <nav class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="shop.html?category=Offers">Offers</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="header-icons">
+                <button class="icon-btn cart-icon" onclick="openCartModal()">
+                    <i class="fas fa-shopping-bag"></i><span class="badge cart-count" style="display:none;">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Product Details -->
+    <section class="section">
+        <div class="container" id="product-detail-view">
+            <!-- Populated via JS -->
+            <div style="text-align:center; padding: 50px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 30px; color: var(--primary-color);"></i>
+                <p style="margin-top:15px;">Loading product...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Modal (Same as index) -->
+    <!-- Minimal implementation to save space for product.html, uses shared JS -->
+    <div class="modal" id="cart-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCartModal()">&times;</span>
+            <h2>Your Shopping Cart</h2>
+            <div class="cart-items" id="cart-items-container"></div>
+            <div class="cart-summary">
+                <div class="cart-total"><span>Total:</span><span id="cart-total-amount">₹0</span></div>
+                <button class="btn" id="checkout-btn" style="width:100%; display:none;" onclick="toggleCheckoutForm()">Proceed to Checkout</button>
+            </div>
+            <form class="checkout-form" id="checkout-form" onsubmit="submitCartOrder(event)">
+                <!-- condensed form for token limit, functionally identical -->
+                <input type="text" id="customer-name" placeholder="Name" required style="width:100%; margin-bottom:10px; padding:8px;">
+                <input type="tel" id="customer-phone" placeholder="Phone" required style="width:100%; margin-bottom:10px; padding:8px;">
+                <textarea id="customer-address" placeholder="Address" required style="width:100%; margin-bottom:10px; padding:8px;"></textarea>
+                <input type="text" id="customer-area" placeholder="Area" required style="width:48%; margin-bottom:10px; padding:8px;">
+                <input type="text" id="customer-pincode" placeholder="Pincode" required style="width:48%; margin-bottom:10px; padding:8px;">
+                <button type="submit" class="btn-whatsapp-order" style="width:100%;"><i class="fab fa-whatsapp"></i> Order</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/whatsapp.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = parseInt(urlParams.get('id'));
+            
+            const products = getProducts();
+            const product = products.find(p => p.id === productId);
+            const container = document.getElementById('product-detail-view');
+            
+            if (!product) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h2>Product not found</h2>
+                        <a href="shop.html" class="btn mt-3">Back to Shop</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            document.title = `${product.name} | RTN LETZZ NATURE`;
+            
+            const priceHtml = product.offerPrice 
+                ? `<span class="price-old" style="font-size:20px;">${formatCurrency(product.price)}</span>
+                   <span>${formatCurrency(product.offerPrice)}</span>
+                   <span class="product-badge badge-offer" style="position:relative; top:0; left:0; font-size:14px; padding: 5px 10px;">Sale</span>`
+                : `<span>${formatCurrency(product.price)}</span>`;
+
+            const stockHtml = product.stock 
+                ? `<div class="stock-status in-stock"><i class="fas fa-check-circle"></i> In Stock</div>` 
+                : `<div class="stock-status out-stock"><i class="fas fa-times-circle"></i> Out of Stock</div>`;
+
+            container.innerHTML = `
+                <div class="product-detail-container">
+                    <div class="detail-image">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="detail-info">
+                        <div class="detail-brand">${product.brand} | ${product.category}</div>
+                        <h1>${product.name}</h1>
+                        <div class="product-rating" style="margin-bottom:20px; font-size: 18px;">
+                            <i class="fas fa-star"></i> ${product.rating}
+                        </div>
+                        <div class="detail-price">${priceHtml}</div>
+                        ${stockHtml}
+                        <div class="detail-desc">${product.description}</div>
+                        
+                        <div class="quantity-selector">
+                            <label style="font-weight:600;">Quantity:</label>
+                            <input type="number" id="qty-input" value="1" min="1" max="10" ${!product.stock ? 'disabled' : ''}>
+                        </div>
+                        
+                        <div class="action-buttons">
+                            <button class="btn" onclick="addToCart(${product.id}, parseInt(document.getElementById('qty-input').value))" ${!product.stock ? 'disabled' : ''} style="background-color: var(--secondary-color); color: white;">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                            <button class="btn btn-whatsapp-order" onclick="sendProductWhatsAppOrder(${product.id})" ${!product.stock ? 'disabled' : ''}>
+                                <i class="fab fa-whatsapp"></i> Order Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | RTN LETZZ NATURE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+
+    <!-- Header (Same as index.html) -->
+    <header>
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <img src="images/logo.jpg" alt="RTN LETZZ NATURE Logo">
+            </a>
+            <nav class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="shop.html" class="active">Shop</a>
+                <a href="shop.html?category=Offers">Offers</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+            <div class="header-icons">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search products...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button class="icon-btn wishlist-icon" onclick="window.location.href='shop.html?wishlist=true'">
+                    <i class="far fa-heart"></i>
+                    <span class="badge wishlist-count" style="display:none;">0</span>
+                </button>
+                <button class="icon-btn cart-icon" onclick="openCartModal()">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="badge cart-count" style="display:none;">0</span>
+                </button>
+                <button class="menu-toggle" id="mobile-menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="section" style="padding: 40px 0 20px; background: var(--accent-color);">
+        <div class="container" style="text-align: center;">
+            <h1 id="page-title">All Products</h1>
+            <p id="page-subtitle">Discover our full collection of premium beauty products.</p>
+        </div>
+    </section>
+
+    <!-- Shop Content -->
+    <section class="section" style="padding-top: 30px;">
+        <div class="container">
+            <div class="category-filters" id="shop-filters">
+                <!-- Dynamically populated -->
+            </div>
+            
+            <div class="product-grid" id="shop-grid">
+                <!-- Products dynamically inserted here -->
+            </div>
+            
+            <div id="no-results" class="empty-state" style="display:none;">
+                <i class="fas fa-search"></i>
+                <h3>No products found</h3>
+                <p>Try adjusting your search or filter criteria.</p>
+                <a href="shop.html" class="btn mt-3" style="margin-top:20px;">View All Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating WhatsApp & Mobile Nav (Same as index.html) -->
+    <a href="#" class="floating-whatsapp" onclick="sendGeneralInquiry(); return false;"><i class="fab fa-whatsapp"></i></a>
+    
+    <div class="mobile-bottom-nav">
+        <a href="index.html" class="mobile-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="shop.html" class="mobile-nav-item active"><i class="fas fa-store"></i><span>Shop</span></a>
+        <a href="shop.html?wishlist=true" class="mobile-nav-item"><i class="far fa-heart"></i><span>Wishlist</span></a>
+        <a href="#" class="mobile-nav-item" onclick="openCartModal(); return false;">
+            <i class="fas fa-shopping-bag"></i><span>Cart</span>
+            <span class="badge cart-count" style="display:none; position:absolute; top:5px; right:20px;">0</span>
+        </a>
+    </div>
+
+    <!-- Cart Modal (Same as index.html) -->
+    <div class="modal" id="cart-modal">
+        <!-- Reusing cart modal structure -->
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCartModal()">&times;</span>
+            <h2>Your Shopping Cart</h2>
+            <div class="cart-items" id="cart-items-container"></div>
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <span>Grand Total:</span>
+                    <span id="cart-total-amount">₹0</span>
+                </div>
+                <button class="btn" id="checkout-btn" style="width:100%; display:none;" onclick="toggleCheckoutForm()">Proceed to WhatsApp Checkout</button>
+            </div>
+            <form class="checkout-form" id="checkout-form" onsubmit="submitCartOrder(event)">
+                <h3>Delivery Details</h3>
+                <div class="form-group"><label>Full Name *</label><input type="text" id="customer-name" required></div>
+                <div class="form-group"><label>Mobile Number *</label><input type="tel" id="customer-phone" required pattern="[0-9]{10}"></div>
+                <div class="form-group"><label>Full Address *</label><textarea id="customer-address" rows="2" required></textarea></div>
+                <div class="form-group" style="display:flex; gap:10px;">
+                    <div style="flex:1;"><label>Area / Landmark *</label><input type="text" id="customer-area" required></div>
+                    <div style="flex:1;"><label>Pincode *</label><input type="text" id="customer-pincode" required pattern="[0-9]{6}"></div>
+                </div>
+                <div class="form-group"><label>Order Notes (Optional)</label><input type="text" id="customer-notes"></div>
+                <button type="submit" class="btn-whatsapp-order" style="width:100%; font-size:16px;"><i class="fab fa-whatsapp"></i> Send Order on WhatsApp</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-col">
+                    <img src="images/logo.jpg" alt="Logo" style="height:40px; margin-bottom:15px;">
+                    <p>Premium quality cosmetics and skincare products crafted to enhance your natural beauty.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="shop.html">Shop All</a></li>
+                        <li><a href="shop.html?category=Offers">Special Offers</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact Info</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-map-marker-alt"></i> <span class="shop-address-text">Address</span></li>
+                        <li><i class="fas fa-phone"></i> <span class="shop-phone-text">Phone</span></li>
+                        <li><i class="fas fa-envelope"></i> <span class="shop-email-text">Email</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; <script>document.write(new Date().getFullYear())</script> <span class="shop-name-text">RTN LETZZ NATURE</span>. All Rights Reserved.
+                <br>
+                <p style="margin-top: 10px; font-size: 14px; color: #aaa;">THIS WEBSITE DEVELOPED BY VIGNESH IF YOU NEED MORE INFO CONTACT 9360039283</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/whatsapp.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            const search = urlParams.get('search');
+            const showWishlist = urlParams.get('wishlist');
+            
+            const allProducts = getProducts();
+            let displayProducts = [...allProducts];
+            
+            const pageTitle = document.getElementById('page-title');
+            const pageSubtitle = document.getElementById('page-subtitle');
+            
+            // Filter Logic
+            if (showWishlist === 'true') {
+                const wishlist = getWishlist();
+                displayProducts = allProducts.filter(p => wishlist.includes(p.id));
+                pageTitle.textContent = "Your Wishlist";
+                pageSubtitle.textContent = "Products you've saved for later.";
+            } else if (search) {
+                const q = search.toLowerCase();
+                displayProducts = allProducts.filter(p => 
+                    p.name.toLowerCase().includes(q) || 
+                    p.category.toLowerCase().includes(q) ||
+                    p.brand.toLowerCase().includes(q)
+                );
+                pageTitle.textContent = `Search: "${search}"`;
+                pageSubtitle.textContent = `${displayProducts.length} results found.`;
+                
+                // Prefill search input
+                document.querySelectorAll('.search-input').forEach(input => input.value = search);
+            } else if (category) {
+                if (category === 'Offers') {
+                    displayProducts = allProducts.filter(p => p.offerPrice !== null);
+                    pageTitle.textContent = "Special Offers";
+                } else {
+                    displayProducts = allProducts.filter(p => p.category === category);
+                    pageTitle.textContent = category;
+                }
+                pageSubtitle.textContent = `Explore our collection of ${category}.`;
+            }
+
+            // Render Filters
+            const categories = [...new Set(allProducts.map(p => p.category))];
+            const filterContainer = document.getElementById('shop-filters');
+            
+            filterContainer.innerHTML = `<a href="shop.html" class="filter-btn ${(!category && !search && !showWishlist) ? 'active' : ''}">All</a>`;
+            categories.forEach(cat => {
+                const isActive = category === cat ? 'active' : '';
+                filterContainer.innerHTML += `<a href="shop.html?category=${encodeURIComponent(cat)}" class="filter-btn ${isActive}">${cat}</a>`;
+            });
+            filterContainer.innerHTML += `<a href="shop.html?category=Offers" class="filter-btn ${category === 'Offers' ? 'active' : ''}" style="color:var(--danger-color);">Offers</a>`;
+
+            // Render Products
+            const gridContainer = document.getElementById('shop-grid');
+            const noResults = document.getElementById('no-results');
+            
+            if (displayProducts.length === 0) {
+                gridContainer.style.display = 'none';
+                noResults.style.display = 'block';
+            } else {
+                gridContainer.style.display = 'grid';
+                noResults.style.display = 'none';
+                displayProducts.forEach(p => {
+                    gridContainer.innerHTML += createProductCard(p);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
