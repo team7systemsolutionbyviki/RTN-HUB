@@ -413,7 +413,7 @@ function handleAddProduct(event) {
         rating: 5.0
     };
 
-    const existingIndex = products.findIndex(p => p.id === product.id);
+    const existingIndex = products.findIndex(p => p.id == product.id);
     if (existingIndex >= 0) {
         products[existingIndex] = product;
         if (typeof showToast !== 'undefined') showToast('Product updated');
@@ -495,7 +495,7 @@ function handleProductImageUpload(event) {
 
 function editProduct(id) {
     const products = getProducts();
-    const p = products.find(prod => prod.id === id);
+    const p = products.find(prod => prod.id == id);
     if(!p) return;
 
     document.getElementById('edit-id').value = p.id;

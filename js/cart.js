@@ -12,7 +12,7 @@ function saveCart(cart) {
 
 function addToCart(productId, quantity = 1) {
     const products = getProducts();
-    const product = products.find(p => p.id === productId);
+    const product = products.find(p => p.id == productId);
     
     if (!product || !product.stock) {
         showToast('Product unavailable', 'error');
@@ -20,7 +20,7 @@ function addToCart(productId, quantity = 1) {
     }
 
     let cart = getCart();
-    const existingItemIndex = cart.findIndex(item => item.id === productId);
+    const existingItemIndex = cart.findIndex(item => item.id == productId);
     
     if (existingItemIndex > -1) {
         cart[existingItemIndex].quantity += quantity;
@@ -49,7 +49,7 @@ function updateCartQuantity(productId, newQuantity) {
     if (newQuantity < 1) return;
     
     let cart = getCart();
-    const itemIndex = cart.findIndex(item => item.id === productId);
+    const itemIndex = cart.findIndex(item => item.id == productId);
     
     if (itemIndex > -1) {
         cart[itemIndex].quantity = newQuantity;

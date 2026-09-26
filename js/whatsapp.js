@@ -7,7 +7,7 @@ function encodeMessage(text) {
 // Order Single Product
 function sendProductWhatsAppOrder(productId) {
     const products = getProducts();
-    const product = products.find(p => p.id === productId);
+    const product = products.find(p => p.id == productId);
     
     if (!product) return;
 

@@ -12,7 +12,7 @@ const defaultShopConfig = {
     mapIframe: ""
 };
 
-const SHOP_CONFIG = JSON.parse(localStorage.getItem('glow_shop_config')) || defaultShopConfig;
+const SHOP_CONFIG = Object.assign({}, defaultShopConfig);
 // Backward compatibility for old configs without banners
 if (!SHOP_CONFIG.banners) SHOP_CONFIG.banners = ["images/banner1.jpg"];
 

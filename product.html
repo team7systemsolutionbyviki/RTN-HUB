@@ -174,7 +174,7 @@
             const productId = parseInt(urlParams.get('id'));
             
             const products = getProducts();
-            const product = products.find(p => p.id === productId);
+            const product = products.find(p => p.id == productId);
             const container = document.getElementById('product-detail-view');
             
             if (!product) {

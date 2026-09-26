@@ -115,19 +115,7 @@ const defaultProducts = [
     }
 ];
 
-// Initialize products in local storage if not present
-function initializeProducts() {
-    let storedProducts = localStorage.getItem('glow_products');
-    if (!storedProducts) {
-        localStorage.setItem('glow_products', JSON.stringify(defaultProducts));
-    }
-}
-
 // Get all products
 function getProducts() {
-    initializeProducts();
-    return JSON.parse(localStorage.getItem('glow_products')) || [];
+    return defaultProducts;
 }
-
-// Initialize on script load
-initializeProducts();

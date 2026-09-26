@@ -190,75 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Apply UI immediately from localStorage
     updateShopUI();
     
-    // Attempt to pull latest config from Firebase
-    if (window.firebaseGetDoc && window.firebaseDb) {
-        const shopRef = window.firebaseDoc(window.firebaseDb, "shop", "info");
-        window.firebaseGetDoc(shopRef).then(docSnap => {
-            if (docSnap.exists()) {
-                const data = docSnap.data();
-                const oldConfigStr = localStorage.getItem('glow_shop_config');
-                let isDifferent = true;
-                
-                if (oldConfigStr) {
-                    try {
-                        const oldConfig = JSON.parse(oldConfigStr);
-                        const standardize = obj => JSON.stringify(obj, Object.keys(obj).sort());
-                        if (standardize(oldConfig) === standardize(data)) {
-                            isDifferent = false;
-                        }
-                    } catch (e) {}
-                }
-
-                if (isDifferent) {
-                    localStorage.setItem('glow_shop_config', JSON.stringify(data));
-                    Object.assign(SHOP_CONFIG, data);
-                    updateShopUI();
-                }
-            }
-        }).catch(err => console.error("Firebase load error: ", err));
-    }
-    
-    // Attempt to pull latest products from Firebase
-    if (window.firebaseGetDocs && window.firebaseCollection && window.firebaseDb) {
-        window.firebaseGetDocs(window.firebaseCollection(window.firebaseDb, "products")).then(snapshot => {
-            if (!snapshot.empty) {
-                let remoteProducts = [];
-                snapshot.forEach(doc => {
-                    remoteProducts.push(doc.data());
-                });
-                
-                // Sort products numerically by ID
-                remoteProducts.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-
-                const oldProductsStr = localStorage.getItem('glow_products');
-                let isDifferent = true;
-                
-                if (oldProductsStr) {
-                    try {
-                        const oldProducts = JSON.parse(oldProductsStr);
-                        // Simple deep check (ignoring key order) by standardizing JSON
-                        const standardize = obj => JSON.stringify(obj, Object.keys(obj).sort());
-                        if (oldProducts.length === remoteProducts.length) {
-                            const oldHash = oldProducts.map(standardize).join('');
-                            const newHash = remoteProducts.map(standardize).join('');
-                            if (oldHash === newHash) isDifferent = false;
-                        }
-                    } catch (e) { console.error(e); }
-                }
-
-                if (isDifferent) {
-                    localStorage.setItem('glow_products', JSON.stringify(remoteProducts));
-                    const isAdminPage = window.location.pathname.includes('admin.html');
-                    if (!isAdminPage) {
-                        // Reload to apply new products if we are on shop or home page
-                        window.location.reload();
-                    } else if (typeof renderAdminProducts === 'function') {
-                        renderAdminProducts();
-                    }
-                }
-            }
-        }).catch(err => console.error("Firebase products load error: ", err));
-    }
+    // Apply UI immediately from config.js
+    updateShopUI();
     
     // Init Banner Slider
     const heroSlides = document.getElementById('hero-slides');
