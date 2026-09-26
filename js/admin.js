@@ -90,6 +90,14 @@ function handleSaveConfig(event) {
         
         Object.assign(SHOP_CONFIG, config);
         
+        // --- Push to Firebase ---
+        if (window.firebaseSetDoc && window.firebaseDb) {
+            const shopRef = window.firebaseDoc(window.firebaseDb, "shop", "info");
+            window.firebaseSetDoc(shopRef, config, { merge: true })
+                .then(() => console.log("Firebase: Shop info updated!"))
+                .catch(err => console.error("Firebase error: ", err));
+        }
+        
         if (typeof showToast !== 'undefined') {
             showToast('Shop Settings Saved! Reloading...');
         } else {
@@ -354,6 +362,15 @@ function deleteProduct(id) {
         let products = getProducts();
         products = products.filter(p => p.id !== id);
         localStorage.setItem('glow_products', JSON.stringify(products));
+
+        // --- Remove from Firebase ---
+        if (window.firebaseDeleteDoc && window.firebaseDb) {
+            const productRef = window.firebaseDoc(window.firebaseDb, "products", id.toString());
+            window.firebaseDeleteDoc(productRef)
+                .then(() => console.log("Firebase: Product " + id + " deleted!"))
+                .catch(err => console.error("Firebase error: ", err));
+        }
+
         renderAdminProducts();
         showToast('Product deleted');
     }
@@ -391,6 +408,15 @@ function handleAddProduct(event) {
 
     try {
         localStorage.setItem('glow_products', JSON.stringify(products));
+
+        // --- Push to Firebase ---
+        if (window.firebaseSetDoc && window.firebaseDb) {
+            const productRef = window.firebaseDoc(window.firebaseDb, "products", product.id.toString());
+            window.firebaseSetDoc(productRef, product, { merge: true })
+                .then(() => console.log("Firebase: Product " + product.id + " saved!"))
+                .catch(err => console.error("Firebase error: ", err));
+        }
+
         document.getElementById('admin-form').reset();
         document.getElementById('edit-id').value = '';
         document.getElementById('p-image-stats').textContent = '';
