@@ -292,6 +292,14 @@ function handleAddBanner(event) {
     
     try {
         localStorage.setItem('glow_shop_config', JSON.stringify(SHOP_CONFIG));
+        
+        // --- Push to Firebase ---
+        if (window.firebaseSetDoc && window.firebaseDb) {
+            const shopRef = window.firebaseDoc(window.firebaseDb, "shop", "info");
+            window.firebaseSetDoc(shopRef, SHOP_CONFIG, { merge: true })
+                .catch(err => console.error("Firebase error: ", err));
+        }
+
         urlInput.value = '';
         document.getElementById('c-banner-upload').value = '';
         renderAdminBanners();
@@ -307,6 +315,14 @@ function deleteBanner(index) {
     if(confirm('Are you sure you want to delete this banner?')) {
         SHOP_CONFIG.banners.splice(index, 1);
         localStorage.setItem('glow_shop_config', JSON.stringify(SHOP_CONFIG));
+        
+        // --- Push to Firebase ---
+        if (window.firebaseSetDoc && window.firebaseDb) {
+            const shopRef = window.firebaseDoc(window.firebaseDb, "shop", "info");
+            window.firebaseSetDoc(shopRef, SHOP_CONFIG, { merge: true })
+                .catch(err => console.error("Firebase error: ", err));
+        }
+        
         renderAdminBanners();
         if (typeof showToast !== 'undefined') showToast('Banner deleted');
     }
