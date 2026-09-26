@@ -164,12 +164,7 @@ searchInputs.forEach(input => {
     input.addEventListener('keypress', handleSearch);
 });
 
-// Initialize app data
-document.addEventListener('DOMContentLoaded', () => {
-    updateWishlistCount();
-    if(typeof updateCartCount === 'function') updateCartCount();
-    
-    // Update shop config texts if elements exist
+function updateShopUI() {
     document.querySelectorAll('.shop-name-text').forEach(el => el.textContent = SHOP_CONFIG.name);
     document.querySelectorAll('.shop-phone-text').forEach(el => el.textContent = SHOP_CONFIG.phone);
     document.querySelectorAll('.shop-address-text').forEach(el => el.textContent = SHOP_CONFIG.address);
@@ -178,6 +173,56 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update logo
     document.querySelectorAll('.logo img').forEach(img => img.src = SHOP_CONFIG.logo);
     document.querySelectorAll('footer img[alt="Logo"]').forEach(img => img.src = SHOP_CONFIG.logo);
+    
+    // Update document title dynamically
+    if (document.title.includes('RTN LETZZ NATURE') && SHOP_CONFIG.name !== 'RTN LETZZ NATURE') {
+        document.title = document.title.replace('RTN LETZZ NATURE', SHOP_CONFIG.name);
+    } else if (!document.title.includes(SHOP_CONFIG.name)) {
+        document.title = SHOP_CONFIG.name + ' | Premium Cosmetics';
+    }
+}
+
+// Initialize app data
+document.addEventListener('DOMContentLoaded', () => {
+    updateWishlistCount();
+    if(typeof updateCartCount === 'function') updateCartCount();
+    
+    // Apply UI immediately from localStorage
+    updateShopUI();
+    
+    // Attempt to pull latest config from Firebase
+    if (window.firebaseGetDoc && window.firebaseDb) {
+        const shopRef = window.firebaseDoc(window.firebaseDb, "shop", "info");
+        window.firebaseGetDoc(shopRef).then(docSnap => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                const oldConfig = localStorage.getItem('glow_shop_config');
+                if (oldConfig !== JSON.stringify(data)) {
+                    localStorage.setItem('glow_shop_config', JSON.stringify(data));
+                    Object.assign(SHOP_CONFIG, data);
+                    updateShopUI();
+                }
+            }
+        }).catch(err => console.error("Firebase load error: ", err));
+    }
+    
+    // Attempt to pull latest products from Firebase
+    if (window.firebaseGetDocs && window.firebaseCollection && window.firebaseDb) {
+        window.firebaseGetDocs(window.firebaseCollection(window.firebaseDb, "products")).then(snapshot => {
+            if (!snapshot.empty) {
+                let remoteProducts = [];
+                snapshot.forEach(doc => {
+                    remoteProducts.push(doc.data());
+                });
+                const oldProducts = localStorage.getItem('glow_products');
+                if (oldProducts !== JSON.stringify(remoteProducts)) {
+                    localStorage.setItem('glow_products', JSON.stringify(remoteProducts));
+                    // Optional: reload to apply new products if we are on shop or home page
+                    // window.location.reload(); 
+                }
+            }
+        }).catch(err => console.error("Firebase products load error: ", err));
+    }
     
     // Init Banner Slider
     const heroSlides = document.getElementById('hero-slides');
