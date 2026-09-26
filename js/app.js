@@ -217,8 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const oldProducts = localStorage.getItem('glow_products');
                 if (oldProducts !== JSON.stringify(remoteProducts)) {
                     localStorage.setItem('glow_products', JSON.stringify(remoteProducts));
-                    // Optional: reload to apply new products if we are on shop or home page
-                    // window.location.reload(); 
+                    // Reload to apply new products if we are on shop or home page
+                    window.location.reload(); 
                 }
             }
         }).catch(err => console.error("Firebase products load error: ", err));
